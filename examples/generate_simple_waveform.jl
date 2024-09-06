@@ -23,7 +23,7 @@ ElementaryCharge * 5E6 / 5u"ns" * 50u"Ω" |> u"mV"
 fwhm = 6.0
 gumbel_scale = gumbel_width_from_fwhm(6)
 gumbel_loc = 10
-spe_d = make_spe_dist(pmt_config.spe_template)
+
 adc_range = (0.0, 1000.0)
 adc_bits = 12
 
@@ -48,6 +48,7 @@ pmt_config = PMTConfig(
     tt_mean=25, # TT mean
     tt_fwhm=1.5 # TT FWHM
 )
+spe_d = make_spe_dist(pmt_config.spe_template)
 df = CSV.read("/Users/vincentgousy-leblanc/Documents/GitHub/PMT_waveform_gen/muon_data/muon.csv", DataFrame)
 
 #result = df[df.age .> 30, [:name, :salary]]
