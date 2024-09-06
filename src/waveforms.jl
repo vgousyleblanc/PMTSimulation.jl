@@ -5,7 +5,7 @@ using NonNegLeastSquares
 using CairoMakie
 using DSP
 export Waveform
-export add_gaussian_white_noise, digitize_waveform, unfold_waveform, plot_waveform
+export add_gaussian_white_noise, digitize_waveform, unfold_waveform, plot_waveform,time_over_threshold
 export adc_bins, digitize
 import ..PMTConfig
 
@@ -176,13 +176,15 @@ function digitize_waveform(
     wf = Waveform(ps, sampling_frequency, noise_amp; time_range=time_range)
     digitize_waveform(wf, sampling_frequency, digitizer_frequency, filter, yrange, yres_bits)
 end
-
-function digitize_waveform(ps::PulseSeries, pmt_config::PMTConfig; time_range)
-    return digitize_waveform(ps, pmt_config.sampling_freq, pmt_config.adc_freq, pmt_config.noise_amp,
+function digitize_waveform(ps::PulseSeries, pmt_config::PMTConfig; time_range=(-50.0, 150.0))
+    return digitize_waveform(ps,
+                     pmt_config.sampling_freq,
+                     pmt_config.adc_freq,
+                     pmt_config.noise_amp,
         pmt_config.lp_filter, pmt_config.adc_dyn_range, pmt_config.adc_bits; time_range=time_range)
 end
 
-function time_over_threashold(waveform::Waveform)
+function time_over_threshold(waveform::Waveform)
 
     if length(waveform) == 0
         return Waveform(empty(waveform.timestamps), empty(waveform.values))
