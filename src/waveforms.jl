@@ -182,6 +182,26 @@ function digitize_waveform(ps::PulseSeries, pmt_config::PMTConfig; time_range)
         pmt_config.lp_filter, pmt_config.adc_dyn_range, pmt_config.adc_bits; time_range=time_range)
 end
 
+function time_over_threashold(waveform::Waveform)
+
+    if length(waveform) == 0
+        return Waveform(empty(waveform.timestamps), empty(waveform.values))
+    end
+    threshold=3
+    bool_array = waveform.values .> threshold
+    # Step 2: Calculate the difference between consecutive elements
+    diff_bool = diff_bool = vcat(false, diff(bool_array))#diff(bool_array)
+    bool_diff = diff_bool .!= 0
+    tot = waveform.timestamps[bool_diff][2:2:end] .- waveform.timestamps[bool_diff][1:2:end]
+    #TOT=abs(waveform.timestamps[indices[end]]-waveform.timestamps[indices[1]])
+    timing=(waveform.timestamps[bool_diff][2:2:end] .+ waveform.timestamps[bool_diff][1:2:end])/2
+    charge=exp.((tot .- 10)/5)*2
+    #timing=abs(waveform.timestamps[indices[end]]+waveform.timestamps[indices[1]])/2
+    #max_value = maximum(waveform.values)
+    #indices_2 = findall(x -> x == max_value, waveform.values)
+    #timing=waveform.timestamps[indices_2[1]]
+    return tot,charge,timing
+end
 
 
 function make_nnls_matrix(
